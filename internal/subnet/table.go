@@ -50,7 +50,7 @@ func LoadTable(filename string) (*IP4SubnetTable, error) {
 	for scanner.Scan() {
 		subnet := Parse(scanner.Text())
 		if subnet != nil {
-			table = append(table, *subnet)
+			table.Add(*subnet)
 		}
 	}
 	return &table, scanner.Err()
