@@ -25,7 +25,7 @@ IP адреса которых из реестра он так же включи
 
 ## Командная строка ##
 
-`unrkn [-a list_name] [-f format] [=o file] [-w file]`
+`unrkn [-a list_name] [-f format] [-o file] [-w file]`
 
 | Ключ           | Описание |
 |----------------|----------|
