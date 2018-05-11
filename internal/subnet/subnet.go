@@ -31,18 +31,35 @@ func Parse(s string) *IP4Subnet {
 	subnet.Mask = 0xFFFFFFFF << (32 - subnet.MaskLength)
 	for i := 1; i < 5; i++ {
 		byte, _ := strconv.ParseUint(parts[i], 10, 8)
-		subnet.Address |= uint32(byte) << uint8((4-i)*8)
+		subnet.Address |= uint32(byte) << uint8((4 - i) * 8)
 	}
 	return &subnet
 }
 
 // Contains check if subnet contains or equal to other subnet
 func (n IP4Subnet) Contains(subnet IP4Subnet) bool {
-	return n.MaskLength <= subnet.MaskLength && (n.Address&n.Mask) == (subnet.Address&n.Mask)
+	return n.MaskLength <= subnet.MaskLength && (n.Address & n.Mask) == (subnet.Address & n.Mask)
+}
+
+// IsPrivate checks if subnet contained or equal to RFC1819 private nets
+func (n IP4Subnet) IsPrivate() bool {
+	// 192.168.0.0/16
+	if n.Mask >= 16 && n.Address & 0xFFFF0000 == 0xC0A80000 {
+		return true
+	}
+	// 172.16.0.0/12
+	if n.Mask >= 12 && n.Address & 0xFFF00000 == 0xAC100000 {
+		return true
+	}
+	// 10.0.0.0/8
+	if n.Mask >= 8 && n.Address & 0xFF000000 == 0x0A000000 {
+		return true
+	}
+	return false
 }
 
 func (n IP4Subnet) String() string {
-	s := fmt.Sprintf("%d.%d.%d.%d", uint8(n.Address>>24), uint8(n.Address>>16), uint8(n.Address>>8), uint8(n.Address))
+	s := fmt.Sprintf("%d.%d.%d.%d", uint8(n.Address >> 24), uint8(n.Address >> 16), uint8(n.Address >> 8), uint8(n.Address))
 	if n.MaskLength != 32 {
 		s += fmt.Sprintf("/%d", n.MaskLength)
 	}

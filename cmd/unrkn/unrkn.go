@@ -77,7 +77,12 @@ func main() {
 			for _, s := range ips {
 				subnet := subnet.Parse(s)
 				if subnet != nil {
-					subnets.Add(*subnet)
+					if subnet.IsPrivate() {
+						msg := fmt.Sprintf("Skipping private IP address %s\n", subnet.String())
+						os.Stderr.WriteString(msg)
+					} else {
+						subnets.Add(*subnet)
+					}
 				} else {
 					msg := fmt.Sprintf("Error parsing IP address %s\n", s)
 					os.Stderr.WriteString(msg)
