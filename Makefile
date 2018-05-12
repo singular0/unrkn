@@ -1,15 +1,12 @@
-GOCMD=go
-GOBUILD=$(GOCMD) build
-GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
 
-CMD_NAME=unrkn
-    
-all: build
+all: test build
 
 build:
-	$(GOBUILD) ./cmd/$(CMD_NAME)
+	go build ./cmd/unrkn
+
+test:
+	go test ./internal/subnet
 
 clean:
-	$(GOCLEAN)
-	rm -f $(CMD_NAME)
+	go clean
+	rm -f unrkn
