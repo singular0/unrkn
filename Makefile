@@ -2,11 +2,11 @@
 all: test build
 
 build:
-    go build ./cmd/unrkn
+	go build ./cmd/unrkn
 
 test:
-    go test ./internal/subnet
+	go test ./internal/subnet
 
 clean:
-    go clean
-    rm -f unrkn
+	go clean
+	rm -f unrkn
