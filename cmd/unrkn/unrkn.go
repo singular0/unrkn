@@ -80,6 +80,9 @@ func main() {
                     if subnet.IsPrivate() {
                         msg := fmt.Sprintf("Skipping private IP address %s\n", subnet.String())
                         os.Stderr.WriteString(msg)
+                    } else if subnet.IsLocal() {
+                        msg := fmt.Sprintf("Skipping local IP address %s\n", subnet.String())
+                        os.Stderr.WriteString(msg)
                     } else {
                         subnets.Add(*subnet)
                     }

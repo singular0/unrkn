@@ -38,7 +38,7 @@ func TestString(t *testing.T) {
     for _, test := range tests {
         s := test.subnet.String()
         if s != test.result {
-            t.Errorf("Failed String() for '%s': should be '%s'", test.subnet, test.result)
+            t.Errorf("Failed '%s'.String(): should be '%s'", test.subnet, test.result)
         }
     }
 }
@@ -61,7 +61,7 @@ func TestContains(t *testing.T) {
         subnet1 := Parse(test.s1)
         subnet2 := Parse(test.s2)
         if subnet1.Contains(*subnet2) != test.result {
-            t.Errorf("Failed %s.Contains(%s): should be %t", subnet1, subnet2, test.result)
+            t.Errorf("Failed '%s'.Contains('%s'): should be %t", subnet1, subnet2, test.result)
         }
     }
 }
@@ -82,7 +82,25 @@ func TestIsPrivate(t *testing.T) {
     for _, test := range tests {
         subnet := Parse(test.s)
         if subnet.IsPrivate() != test.result {
-            t.Errorf("Failed %s.IsPrivate(): should be %t", subnet, test.result)
+            t.Errorf("Failed '%s'.IsPrivate(): should be %t", subnet, test.result)
+        }
+    }
+}
+
+func TestIsLocal(t *testing.T) {
+    tests := []struct{
+        s string
+        result bool
+    }{
+        { "0.1.2.3",        true },
+        { "127.0.0.1",	    true },
+        { "169.254.0.99",	true },
+    }
+    
+    for _, test := range tests {
+        subnet := Parse(test.s)
+        if subnet.IsLocal() != test.result {
+            t.Errorf("Failed '%s'.IsLocal(): should be %t", subnet, test.result)
         }
     }
 }

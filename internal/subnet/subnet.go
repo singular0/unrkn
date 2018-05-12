@@ -41,18 +41,35 @@ func (n IP4Subnet) Contains(subnet IP4Subnet) bool {
     return n.MaskLength <= subnet.MaskLength && (n.Address & n.Mask) == (subnet.Address & n.Mask)
 }
 
-// IsPrivate checks if subnet contained or equal to RFC1819 private nets
+// IsPrivate checks if subnet contained or equal to RFC1918 private nets
 func (n IP4Subnet) IsPrivate() bool {
     // 192.168.0.0/16
-    if n.Mask >= 16 && n.Address & 0xFFFF0000 == 0xC0A80000 {
+    if n.Address & 0xFFFF0000 == 0xC0A80000 {
         return true
     }
     // 172.16.0.0/12
-    if n.Mask >= 12 && n.Address & 0xFFF00000 == 0xAC100000 {
+    if n.Address & 0xFFF00000 == 0xAC100000 {
         return true
     }
     // 10.0.0.0/8
-    if n.Mask >= 8 && n.Address & 0xFF000000 == 0x0A000000 {
+    if n.Address & 0xFF000000 == 0x0A000000 {
+        return true
+    }
+    return false
+}
+
+// IsLocal checks if subnet contained or equal to RFC1122 & RFC3927 defined nets
+func (n IP4Subnet) IsLocal() bool {
+    // 0.0.0.0/8
+    if n.Address & 0xFF000000 == 0x00000000 {
+        return true
+    }
+    // 127.0.0.0/8
+    if n.Address & 0xFF000000 == 0x7F000000 {
+        return true
+    }
+    // 169.254.0.0/16
+    if n.Address & 0xFFFF0000 == 0xA9FE0000 {
         return true
     }
     return false
