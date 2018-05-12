@@ -76,6 +76,7 @@ func TestIsPrivate(t *testing.T) {
 		{ "10.10.10.1",		true },
 		{ "8.8.8.8",		false },
 		{ "8.8.8.8/8",		false },
+		{ "192.167.0.0/16",	false },
 	}
 	
 	for _, test := range tests {
