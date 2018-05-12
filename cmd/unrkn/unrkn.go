@@ -69,6 +69,8 @@ func main() {
             os.Exit(1)
         }
         if len(record) < 4 {
+            msg := fmt.Sprintf("Skipping invalid data row: %s\n", record)
+            os.Stderr.WriteString(msg)
             continue
         }
         host := strings.TrimSpace(record[2])
