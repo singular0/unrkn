@@ -20,11 +20,13 @@ var whitelistFilename string
 var outputFilename string
 var outputFormat string
 var addressList string
+var quiet bool
 
 func init() {
     flag.StringVar(&addressList, "a", "", "Address list name for routeros output format.")
     flag.StringVar(&outputFormat, "f", "raw", "Output format. One of: raw (one subnet per line), routeros (/ip/firewall/address-list add).")
     flag.StringVar(&outputFilename, "o", "", "Output file name. If omitted list will be sent to the console.")
+    flag.BoolVar(&quiet, "q", false, "Suppress non-critical error messages output.")
     flag.StringVar(&whitelistFilename, "w", "", "Whitelist file name. Expected format is one domain name per line. Domain will be converted to wildcard.")
 }
 
@@ -69,8 +71,10 @@ func main() {
             os.Exit(1)
         }
         if len(record) < 4 {
-            msg := fmt.Sprintf("Skipping invalid data row: %s\n", record)
-            os.Stderr.WriteString(msg)
+            if !quiet {
+                msg := fmt.Sprintf("Skipping invalid data row: %s\n", record)
+                os.Stderr.WriteString(msg)
+            }
             continue
         }
         host := strings.TrimSpace(record[2])
@@ -80,17 +84,23 @@ func main() {
                 subnet := subnet.Parse(s)
                 if subnet != nil {
                     if subnet.IsPrivate() {
-                        msg := fmt.Sprintf("Skipping private IP address %s\n", subnet.String())
-                        os.Stderr.WriteString(msg)
+                        if !quiet {
+                            msg := fmt.Sprintf("Skipping private IP address %s\n", subnet.String())
+                            os.Stderr.WriteString(msg)
+                        }
                     } else if subnet.IsLocal() {
-                        msg := fmt.Sprintf("Skipping local IP address %s\n", subnet.String())
-                        os.Stderr.WriteString(msg)
+                        if !quiet {
+                            msg := fmt.Sprintf("Skipping local IP address %s\n", subnet.String())
+                            os.Stderr.WriteString(msg)
+                        }
                     } else {
                         subnets.Add(*subnet)
                     }
                 } else {
-                    msg := fmt.Sprintf("Error parsing IP address %s\n", s)
-                    os.Stderr.WriteString(msg)
+                    if !quiet {
+                        msg := fmt.Sprintf("Error parsing IP address %s\n", s)
+                        os.Stderr.WriteString(msg)
+                    }
                 }
             }
         }
