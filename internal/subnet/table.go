@@ -28,11 +28,17 @@ func (a IP4SubnetTable) Less(i, j int) bool {
 
 // Add add subnet to the and merge it if contained by already existing subnet or contains some of them
 func (a *IP4SubnetTable) Add(net IP4Subnet) {
-    for i, n := range *a {
-        if n.Contains(net) {
+    for i := 0; i < len(*a); {
+        if (*a)[i].Contains(net) {
             return
-        } else if net.Contains(n) {
-            *a = append((*a)[:i], (*a)[i+1:]...)
+        } else if net.Contains((*a)[i]) {
+            if i == len(*a) - 1 {
+                *a = (*a)[:i]
+            } else {
+                *a = append((*a)[:i], (*a)[i+1:]...)
+            }
+        } else {
+            i++
         }
     }
     *a = append(*a, net)
